@@ -53,7 +53,8 @@ public class StarterApplication extends Application {
         }
         */
 
-    ParseUser.enableAutomaticUser();
+    //When you don't require login
+//  ParseUser.enableAutomaticUser();
 
     ParseACL defaultACL = new ParseACL();
     defaultACL.setPublicReadAccess(true);
