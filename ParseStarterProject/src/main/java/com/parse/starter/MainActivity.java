@@ -10,43 +10,59 @@ package com.parse.starter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.LogInCallback;
-import com.parse.Parse;
 import com.parse.ParseAnalytics;
-import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
-import java.util.List;
 
-
-public class MainActivity extends AppCompatActivity implements View.OnClickListener
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener
 {
 
   Boolean signUpModeActive = true;
   TextView logInTextView;
+  EditText usernameEditText;
+  EditText passwordEditText;
+
+  public void showUserList()
+  {
+    Intent intent = new Intent(getApplicationContext(), UserListActivity.class);
+    //intent.putExtra("name", friends.get(position));
+    startActivity(intent);
+
+  }
+
+
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event)
+    {
+      if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)
+      {
+        signUpClicked(v);
+      }
+        return false;
+    }
 
   @Override
   public void onClick(View v)
   {
-    if(v.getId() == R.id.logInTextView)
+    if(v.getId() == R.id.logInTextView)  // FOR LOG IN TEXT VIEW
     {
+
 //      Log.i("Switch"," was tapped!");
       Button signUpButton = findViewById(R.id.signUpButton);
 
@@ -64,21 +80,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
       }
 
     }
+    else if(v.getId() == R.id.logoImageView || v.getId() == R.id.backgroundRelativeLayout)  // TO HIDE KEYBOARD
+    {
+      InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+      mgr.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
 
   }
 
   public void signUpClicked(View view)
   {
 
-    EditText usernameEditText= findViewById(R.id.usernameEditText);
-    EditText passwordEditText= findViewById(R.id.passwordEditText);
-    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-    mgr.hideSoftInputFromWindow(passwordEditText.getWindowToken(), 0);
-
     if (usernameEditText.getText().toString().equals("") || passwordEditText.getText().toString().equals(""))
     {
       Toast.makeText(this, "A username and a password are required", Toast.LENGTH_SHORT).show();
-
     }
     else
     {
@@ -98,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
               Log.i("Sign Up!", "Success");
               Toast.makeText(MainActivity.this, "Successfully Signed Up!", Toast.LENGTH_SHORT).show();
+              showUserList();
             }
             else
             {
@@ -117,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(user != null )
             {
               Log.i("Login","ok!");
+              Toast.makeText(MainActivity.this, "Successfully Logged Up!", Toast.LENGTH_SHORT).show();
+              showUserList();
             }
             else
             {
@@ -136,13 +154,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-
+    usernameEditText= findViewById(R.id.usernameEditText);
+    passwordEditText= findViewById(R.id.passwordEditText);
     logInTextView= findViewById(R.id.logInTextView);
+    ImageView  logoImageView= findViewById(R.id.logoImageView);
+    ConstraintLayout relativeLayout =  findViewById(R.id.backgroundRelativeLayout);
+
+    relativeLayout.setOnClickListener(this);
+    logoImageView.setOnClickListener(this);
     logInTextView.setOnClickListener(this);
+    passwordEditText.setOnKeyListener(this);
+
+    // Checking if someone is logged in
+    if(ParseUser.getCurrentUser() != null)
+    {
+      showUserList();
+    }
+
 
 
     ParseAnalytics.trackAppOpenedInBackground(getIntent());
   }
+
 
 
 }
