@@ -42,10 +42,8 @@ public class UserListActivity extends AppCompatActivity
         startActivityForResult(intent,1);
 
     }
+
     @Override
-
-
-
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
@@ -83,17 +81,12 @@ public class UserListActivity extends AppCompatActivity
                         }
                     }
                 });
-
             }
             catch (Exception e)
             {
                 e.printStackTrace();
             }
-
-
         }
-
-
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -137,6 +130,12 @@ public class UserListActivity extends AppCompatActivity
 
                 return true;
 
+            case R.id.logout:
+                ParseUser.logOut();
+
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+
             default:
                 return false;
         }
@@ -154,6 +153,16 @@ public class UserListActivity extends AppCompatActivity
         usernames.add("test");
 
         final ArrayAdapter arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,usernames);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Intent intent = new Intent(getApplicationContext() , UserFeedActivity.class);
+                intent.putExtra("username",usernames.get(position));
+                startActivity(intent);
+            }
+        });
 
         // To show all users
         ParseQuery<ParseUser> query = ParseUser.getQuery();
