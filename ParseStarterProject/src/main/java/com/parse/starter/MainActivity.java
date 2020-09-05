@@ -154,6 +154,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
+    // SETTING THE TITLE ON TOP
+    setTitle("Instagram");
+
     usernameEditText= findViewById(R.id.usernameEditText);
     passwordEditText= findViewById(R.id.passwordEditText);
     logInTextView= findViewById(R.id.logInTextView);

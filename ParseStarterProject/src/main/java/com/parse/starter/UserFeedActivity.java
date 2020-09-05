@@ -31,12 +31,17 @@ public class UserFeedActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_feed);
 
+        //GETTING THE USERNAME WHICH IS CLICKED
+        Intent intent = getIntent();
+        String username = intent.getStringExtra("username");
+
+        setTitle(username+"'s Photos");
+
+
 // to set images
        linearLayout = findViewById(R.id.linearLayout);
 
-       //GETTING THE USERNAME WHICH IS CLICKED
-        Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
+
 
         // QUERY TO GET ALL IMAGE OBJECT  FOR A PARTICULAR USER THAT HAS THIS USERNAME
         ParseQuery<ParseObject> query = new ParseQuery<>("Image");
