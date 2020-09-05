@@ -19,12 +19,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,8 +57,33 @@ public class UserListActivity extends AppCompatActivity
             try
             {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                ImageView imageView = findViewById(R.id.imageView);
-                imageView.setImageBitmap(bitmap);
+                Log.i("Image Selected","Good Work");
+
+                // UPLOADING IMAGE TO PARSE
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG,100,stream);
+
+                byte[] byteArray = stream.toByteArray();
+                ParseFile file = new ParseFile("image.png", byteArray);
+
+                ParseObject object = new ParseObject("Image");
+
+                object.put("image",file);
+                object.put("username",ParseUser.getCurrentUser().getUsername());
+                object.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e == null)
+                        {
+                            Toast.makeText(UserListActivity.this, "Image has been shared!", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(UserListActivity.this, "There has been an issue uploading the image:( "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
             }
             catch (Exception e)
             {
